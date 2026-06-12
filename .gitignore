@@ -1,0 +1,26 @@
+# Vendor
+/vendor/
+
+# Environment
+.env
+
+# Uploads
+/uploads/*
+!/uploads/.gitkeep
+!/uploads/signed/.gitkeep
+
+# Logs
+/logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials
+src/config/credentials.json

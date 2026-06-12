@@ -1,0 +1,1018 @@
+/* Reset e Variáveis */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #0066cc;
+    --primary-dark: #004d99;
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --text-light: #666;
+    --border-color: #ddd;
+    --error-color: #dc3545;
+    --success-color: #28a745;
+    --white: #ffffff;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    background: var(--white);
+    padding: 40px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.logo-container {
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 200px;
+    height: auto;
+}
+
+.header h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+/* Main Content */
+.main-content {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+/* Form */
+.form-section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.form-group label.checkbox-container {
+    display: flex;
+    margin-bottom: 0;
+}
+
+.form-group label.required::after {
+    content: ' *';
+    color: var(--error-color);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* File Input */
+.file-input-wrapper {
+    position: relative;
+}
+
+.file-input-wrapper input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 2px dashed var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.file-input-label:hover {
+    border-color: var(--primary-color);
+    background: var(--secondary-color);
+}
+
+.file-input-text {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 8px 16px;
+    border-radius: 5px;
+    margin-right: 15px;
+    font-weight: 600;
+}
+
+.file-input-name {
+    color: var(--text-light);
+}
+
+/* Signature Tabs */
+.signature-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px;
+    background: var(--secondary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.tab-button:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.tab-button.active {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.signature-content {
+    position: relative;
+}
+
+.signature-tab {
+    display: none;
+}
+
+.signature-tab.active {
+    display: block;
+}
+
+/* Canvas */
+#signatureCanvas {
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    cursor: crosshair;
+    width: 100%;
+    max-width: 600px;
+    height: 200px;
+    background: var(--white);
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Typed Signature */
+#signatureTyped {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.signature-preview {
+    padding: 30px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    text-align: center;
+    font-family: 'Brush Script MT', cursive;
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--secondary-color);
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+    padding: 14px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--white);
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:disabled {
+    background: var(--border-color);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+/* Form Actions */
+.form-actions {
+    margin-top: 30px;
+}
+
+/* Error Messages */
+.error-message {
+    display: block;
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: 5px;
+    min-height: 20px;
+}
+
+.form-group.error input,
+.form-group.error textarea,
+.form-group.error select {
+    border-color: var(--error-color);
+}
+
+/* Form Message */
+.form-message {
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.form-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 2px solid #c3e6cb;
+}
+
+.form-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 2px solid #f5c6cb;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-light);
+}
+
+.footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* Loader */
+.btn-loader {
+    display: inline-block;
+}
+
+.btn-loader::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--white);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .header,
+    .main-content {
+        padding: 20px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .logo {
+        max-width: 150px;
+    }
+
+    #signatureCanvas {
+        height: 150px;
+    }
+
+    .signature-preview {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.25rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+    }
+
+    .signature-tabs {
+        flex-direction: column;
+    }
+}
+
+/* PDF Viewer */
+.pdf-viewer-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f5f5f5;
+    margin-bottom: 20px;
+}
+
+#pdfViewer {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.pdf-scroll-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 102, 204, 0.95), rgba(0, 102, 204, 0.8));
+    color: var(--white);
+    padding: 15px;
+    text-align: center;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.section-description {
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+/* Checkbox customizado */
+.checkbox-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    user-select: none;
+    padding: 20px;
+    background: var(--secondary-color);
+    border-radius: 8px;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.checkbox-container:hover {
+    background: #e9ecef;
+    border-color: var(--primary-color);
+}
+
+.checkbox-container input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-container input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+}
+
+.checkbox-container input[type="checkbox"]:disabled ~ .checkbox-label {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.checkbox-container input[type="checkbox"]:disabled ~ .checkmark {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f5f5f5;
+}
+
+.checkmark {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    background-color: var(--white);
+    border: 3px solid var(--border-color);
+    border-radius: 6px;
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.checkbox-container:hover input:not(:disabled) ~ .checkmark {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 15px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: translate(-50%, -55%) rotate(45deg);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-label {
+    flex: 1;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 0;
+}
+
+/* PDF Mobile Fallback */
+.pdf-mobile-fallback {
+    display: none;
+    text-align: center;
+    padding: 30px;
+    background: var(--secondary-color);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.pdf-mobile-fallback p {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.btn-open-pdf {
+    display: inline-block;
+    padding: 14px 28px;
+    background: var(--primary-color);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-open-pdf:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+/* Responsivo para PDF Viewer */
+@media (max-width: 768px) {
+    .pdf-viewer-container {
+        height: 300px;
+    }
+    
+    .pdf-iframe {
+        display: none;
+    }
+    
+    .pdf-mobile-fallback {
+        display: block;
+    }
+    
+    .pdf-scroll-indicator {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+}
+
+/* Link de Download do PDF */
+.download-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 24px;
+    background: var(--primary-color);
+    color: var(--white) !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+}
+
+.download-link:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+}
+
+.download-link:active {
+    transform: translateY(0);
+}
+
+/* Container de confirmação de leitura do PDF */
+.pdf-confirm-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.btn-confirm-read {
+    padding: 16px 32px;
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+.btn-confirm-read:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 102, 204, 0.4);
+}
+
+.btn-confirm-read:active {
+    transform: translateY(0);
+}
+
+/* Página de Sucesso */
+.success-container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.success-icon {
+    width: 100px;
+    height: 100px;
+    background: var(--success-color);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    margin: 0 auto 30px;
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.success-container h2 {
+    color: var(--success-color);
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.success-container > p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto 40px;
+}
+
+.success-actions .btn-primary,
+.success-actions .btn-secondary {
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.success-info {
+    background: var(--secondary-color);
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.success-info p {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.success-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.success-info li {
+    padding: 10px 0;
+    padding-left: 30px;
+    position: relative;
+}
+
+.success-info li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .success-container h2 {
+        font-size: 1.5rem;
+    }
+    
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 48px;
+    }
+}
+
+/* ===================================
+   PDF Viewer Styles
+   =================================== */
+.pdf-viewer-container {
+    margin: 20px 0;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    width: 100%;
+    height: 650px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.pdf-loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 16px;
+}
+
+.pdf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 12px;
+    background: #e3f2fd;
+    border-radius: 5px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pdf-info {
+    flex: 1;
+}
+
+.page-info {
+    font-weight: 600;
+    color: #1976d2;
+    font-size: 14px;
+}
+
+.pdf-zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.zoom-btn {
+    background: #0066cc;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.zoom-btn:hover {
+    background: #0052a3;
+}
+
+.zoom-btn:active {
+    transform: scale(0.95);
+}
+
+.zoom-btn-reset {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.zoom-btn-reset:hover {
+    background: #5a6268;
+}
+
+#zoomLevel {
+    font-weight: 600;
+    color: #333;
+    min-width: 50px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.pdf-scroll-container {
+    background: white;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    flex: 1;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box;
+}
+
+/* Forçar scrollbar sempre visível */
+.pdf-scroll-container::-webkit-scrollbar {
+    width: 14px;
+    background: #f1f1f1;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+    margin: 5px 0;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    border: 3px solid #f1f1f1;
+}
+
+.pdf-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Firefox */
+.pdf-scroll-container {
+    scrollbar-width: auto;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+#pdfPagesContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+#pdfPagesContainer canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+    display: block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 3px;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+.pdf-scroll-indicator {
+    text-align: center;
+    margin-top: 15px;
+    padding: 12px;
+    background: #fff3cd;
+    border-radius: 5px;
+    color: #856404;
+    font-weight: 500;
+    animation: pulse 2s infinite;
+    position: relative;
+    z-index: 10;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.pdf-confirm-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.btn-confirm-read {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-confirm-read:hover {
+    background: #218838;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .pdf-viewer-container {
+        padding: 10px;
+        max-height: 650px;
+    }
+    
+    .pdf-header {
+        padding: 10px;
+    }
+    
+    .pdf-viewer-container {
+        height: 550px;
+    }
+    
+    .pdf-scroll-container {
+        padding: 10px;
+    }
+    
+    .pdf-scroll-container::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    .page-info {
+        font-size: 13px;
+    }
+    
+    .zoom-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+    
+    #zoomLevel {
+        font-size: 13px;
+        min-width: 45px;
+    }
+    
+    #pdfPagesContainer {
+        gap: 15px;
+    }
+    
+    #pdfPagesContainer canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
