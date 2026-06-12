@@ -108,10 +108,10 @@ $csrfToken = generateCSRFToken();
                 </section>
                 -->
 
-                <!-- Código do Cliente -->
+                <!-- Documentos para leitura -->
                 <section class="form-section">
-                    <h2 class="section-title">Código do Cliente</h2>
-                    <p class="section-description">Por favor, leia o documento completo abaixo navegando entre as páginas.</p>
+                    <h2 class="section-title">Código do Cliente e Guia do Visitante</h2>
+                    <p class="section-description">Por favor, leia os documentos completos abaixo navegando entre as páginas.</p>
                     
                     <div class="pdf-viewer-container">
                         <div class="pdf-loading" id="pdfLoading">
@@ -151,7 +151,7 @@ $csrfToken = generateCSRFToken();
                         <label class="checkbox-container">
                             <input type="checkbox" id="termos_aceitos" name="termos_aceitos" required>
                             <span class="checkmark"></span>
-                            <span class="checkbox-label">Li e concordo com o Código do Cliente</span>
+                            <span class="checkbox-label">Li e concordo com o Código do Cliente e o Guia do Visitante</span>
                         </label>
                         <span class="error-message" id="error-termos_aceitos"></span>
                     </div>

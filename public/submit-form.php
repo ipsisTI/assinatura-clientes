@@ -30,18 +30,33 @@ try {
     $isBase64Image = (strpos($assinatura, 'data:image') === 0);
     
     $pdf = new \setasign\Fpdi\Fpdi();
-    $pdfPath = __DIR__ . '/doc/CodigoCliente.pdf';
-    
-    if (!file_exists($pdfPath)) {
-        throw new Exception('PDF original nao encontrado: ' . $pdfPath);
-    }
-    
-    $pageCount = $pdf->setSourceFile($pdfPath);
-    for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-        $templateId = $pdf->importPage($pageNo);
-        $size = $pdf->getTemplateSize($templateId);
-        $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
-        $pdf->useTemplate($templateId);
+
+    // Documentos que compoem o formulario, na ordem em que aparecem.
+    // Para adicionar um novo documento, basta incluir o caminho do PDF aqui.
+    $documentos = [
+        __DIR__ . '/doc/CodigoCliente.pdf',
+        __DIR__ . '/doc/GuiaVisitante.pdf',
+    ];
+
+    foreach ($documentos as $pdfPath) {
+        if (!file_exists($pdfPath)) {
+            throw new Exception('PDF original nao encontrado: ' . $pdfPath);
+        }
+
+        try {
+            $pageCount = $pdf->setSourceFile($pdfPath);
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $templateId = $pdf->importPage($pageNo);
+                $size = $pdf->getTemplateSize($templateId);
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($templateId);
+            }
+        } catch (\Exception $e) {
+            // O FPDI gratuito le apenas PDFs ate a versao 1.4. Documentos 1.5+
+            // que usam compressao (object streams) lancam excecao aqui.
+            // Registramos o erro e seguimos para nao quebrar o cadastro.
+            error_log('Falha ao importar documento "' . basename($pdfPath) . '": ' . $e->getMessage());
+        }
     }
     
     $pdf->AddPage('P', 'A4');
@@ -114,7 +129,7 @@ try {
     */
     
     $pdf->SetFont('Arial', '', 10);
-    $pdf->MultiCell(0, 6, 'Declaro que li e concordo integralmente com o Codigo do Cliente, comprometendo-me a cumprir todas as diretrizes, politicas e procedimentos estabelecidos neste documento.', 0, 'J');
+    $pdf->MultiCell(0, 6, 'Declaro que li e concordo integralmente com o Codigo do Cliente e o Guia do Visitante, comprometendo-me a cumprir todas as diretrizes, politicas e procedimentos estabelecidos nestes documentos.', 0, 'J');
     
     $pdf->Ln(20);
     $yAssinatura = $pdf->GetY();
