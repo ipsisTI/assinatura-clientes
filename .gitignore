@@ -12,7 +12,7 @@
 !/uploads/.htaccess
 
 # Logs
-/logs/
+/logs/*
 # A proteção web precisa sobreviver ao deploy via git
 !/logs/.htaccess
 *.log
