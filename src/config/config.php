@@ -53,7 +53,8 @@ if (APP_DEBUG) {
 // Iniciar sessão
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
-    ini_set('session.cookie_secure', 1);
+    ini_set('session.cookie_secure', (APP_ENV === 'production' || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')) ? 1 : 0);
+    ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.use_strict_mode', 1);
     session_start();
 }

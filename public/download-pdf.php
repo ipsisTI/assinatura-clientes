@@ -16,6 +16,13 @@ if (!isset($_GET['file'])) {
 // Sanitizar nome do arquivo
 $filename = basename($_GET['file']);
 
+// Autorização por sessão: só permite baixar arquivos gerados na própria sessão
+$arquivosPermitidos = $_SESSION['downloadable_pdfs'] ?? [];
+if (!in_array($filename, $arquivosPermitidos, true)) {
+    http_response_code(403);
+    die('Acesso nao autorizado a este arquivo.');
+}
+
 // Caminho completo do arquivo
 $filePath = __DIR__ . '/../uploads/signed/' . $filename;
 
@@ -32,8 +39,12 @@ if (pathinfo($filePath, PATHINFO_EXTENSION) !== 'pdf') {
 }
 
 // Headers para download
+// inline=1 renderiza o PDF no navegador (usado pelo iframe da página de
+// sucesso); sem o parâmetro o comportamento padrão continua sendo download
+$disposition = (($_GET['inline'] ?? '') === '1') ? 'inline' : 'attachment';
+
 header('Content-Type: application/pdf');
-header('Content-Disposition: attachment; filename="' . $filename . '"');
+header('Content-Disposition: ' . $disposition . '; filename="' . $filename . '"');
 header('Content-Length: ' . filesize($filePath));
 header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');

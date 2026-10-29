@@ -3,7 +3,7 @@
     "description": "Sistema de Cadastro de Clientes com Assinatura Digital - Ipsis",
     "type": "project",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.3",
         "google/apiclient": "^2.15",
         "vlucas/phpdotenv": "^5.5",
         "setasign/fpdf": "^1.8",

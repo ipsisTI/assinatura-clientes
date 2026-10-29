@@ -1,0 +1,6 @@
+# Defesa em profundidade contra docroot mal configurado: nega acesso web a
+# arquivos sensíveis do projeto (.env e variações, credenciais da Service
+# Account, logs e metadados do Composer). O docroot correto é public/.
+<FilesMatch "^(\.env(\..+)?|credentials.*\.json|.*\.(log|jsonl)|composer\.(json|lock))$">
+    Require all denied
+</FilesMatch>

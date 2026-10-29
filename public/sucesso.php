@@ -129,8 +129,8 @@ $pdfFile = basename($pdfFile); // Segurança
                     
                     <!-- Fallback para mobile que não suporta canvas -->
                     <div id="pdf-embed-fallback" style="display: none;">
-                        <iframe 
-                            src="download-pdf.php?file=<?php echo urlencode($pdfFile); ?>" 
+                        <iframe
+                            src="download-pdf.php?file=<?php echo urlencode($pdfFile); ?>&inline=1"
                             style="width: 100%; height: 600px; border: none; border-radius: 5px;"
                             title="PDF do Código do Cliente">
                         </iframe>

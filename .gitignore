@@ -8,9 +8,14 @@
 /uploads/*
 !/uploads/.gitkeep
 !/uploads/signed/.gitkeep
+# A proteção web precisa sobreviver ao deploy via git
+!/uploads/.htaccess
 
 # Logs
 /logs/
+# A proteção web precisa sobreviver ao deploy via git
+!/logs/.htaccess
+*.log
 
 # IDE
 .idea/

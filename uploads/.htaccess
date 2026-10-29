@@ -1,0 +1,3 @@
+# Bloqueia todo acesso web ao conteúdo desta pasta (defesa em profundidade
+# contra docroot mal configurado; o download legítimo passa pelo PHP com gate de sessão)
+Require all denied

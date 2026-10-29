@@ -35,7 +35,10 @@ class GoogleDriveService
     {
         try {
             if (!file_exists($filePath)) {
-                throw new \Exception('Arquivo não encontrado: ' . $filePath);
+                // Caminho completo apenas no log do servidor; a exceção não deve
+                // vazar informação de diretório até a resposta ao cliente
+                error_log('Arquivo nao encontrado para upload no Drive: ' . $filePath);
+                throw new \Exception('Arquivo nao encontrado para upload no Drive.');
             }
 
             // Metadados do arquivo
@@ -56,15 +59,10 @@ class GoogleDriveService
                 'supportsAllDrives' => true
             ]);
 
-            // Tornar o arquivo acessível via link
-            $permission = new \Google_Service_Drive_Permission([
-                'type' => 'anyone',
-                'role' => 'reader'
-            ]);
-            
-            $this->service->permissions->create($file->id, $permission, [
-                'supportsAllDrives' => true
-            ]);
+            // Não cria mais permissão pública ("anyone" / "reader"):
+            // o acesso ao arquivo é herdado da pasta de destino no Drive
+            // (compartilhada com a equipe), de modo que o PDF deixa de
+            // ficar público por link.
 
             return [
                 'id' => $file->id,

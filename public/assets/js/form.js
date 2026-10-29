@@ -156,29 +156,24 @@ function initializeForm() {
     
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        console.log('Formulário submetido');
-        
+
         // Limpar erros anteriores
         clearErrors();
-        
+
         // Validar termos
         const termosAceitos = document.getElementById('termos_aceitos');
-        console.log('Termos aceitos:', termosAceitos.checked);
         if (!termosAceitos.checked) {
             showError('termos_aceitos', 'Você deve ler e aceitar o Código do Cliente');
             return;
         }
         
         // Validar assinatura
-        console.log('Validando assinatura...');
         if (!validateSignature()) {
             showError('assinatura', 'Assinatura é obrigatória');
             return;
         }
-        console.log('Assinatura válida');
-        
+
         // Obter token reCAPTCHA
-        console.log('Obtendo token reCAPTCHA...');
         try {
             const token = await getRecaptchaToken();
             document.getElementById('recaptchaToken').value = token;
@@ -280,7 +275,6 @@ function validateSignature() {
         // Salvar como base64
         const base64Data = state.canvas.toDataURL('image/png');
         assinaturaInput.value = base64Data;
-        console.log('Assinatura canvas salva, tamanho:', base64Data.length);
     } else {
         // Assinatura digitada
         const typedSignature = document.getElementById('signatureTyped').value.trim();
@@ -290,10 +284,8 @@ function validateSignature() {
         }
         
         assinaturaInput.value = typedSignature;
-        console.log('Assinatura digitada salva:', typedSignature);
     }
-    
-    console.log('Valor final do campo assinatura:', assinaturaInput.value.substring(0, 50));
+
     return true;
 }
 
@@ -335,37 +327,30 @@ async function submitForm(form) {
         formData.delete('assinatura_tipo');
         formData.append('assinatura', assinaturaValue);
         formData.append('assinatura_tipo', assinaturaTipoValue);
-        
-        console.log('=== ENVIANDO ===');
-        console.log('Razao Social:', formData.get('razao_social'));
-        console.log('CNPJ:', formData.get('cnpj'));
-        console.log('Assinatura tipo:', formData.get('assinatura_tipo'));
-        console.log('Assinatura tamanho:', formData.get('assinatura')?.length || 0);
-        
+
         const response = await fetch('submit-form.php', {
             method: 'POST',
             body: formData
         });
-        
-        console.log('Response status:', response.status);
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Erro do servidor:', errorText);
+
+        // Lê o corpo como JSON primeiro: o servidor devolve as mensagens de erro
+        // (validação, CSRF, rate limit etc.) em JSON mesmo respondendo 4xx/5xx.
+        // Se o corpo não for JSON válido, result permanece null.
+        let result = null;
+        try {
+            result = await response.json();
+        } catch (e) {
+            result = null;
+        }
+
+        // Sem JSON válido não há mensagem do servidor a exibir: erro genérico com o status
+        if (result === null || typeof result !== 'object') {
+            console.error('Resposta não-JSON do servidor. Status:', response.status);
             throw new Error('Erro do servidor: ' + response.status);
         }
-        
-        const result = await response.json();
-        console.log('Resultado:', result);
-        
-        if (result.success) {
-            // Redirecionar para página de sucesso
-            if (result.pdf_assinado) {
-                window.location.href = 'sucesso.php?pdf=' + encodeURIComponent(result.pdf_assinado);
-            } else {
-                window.location.href = 'sucesso.php';
-            }
-        } else {
+
+        // Erro devolvido pelo servidor em JSON: exibe a mensagem real para o usuário
+        if (result.success === false) {
             if (result.errors) {
                 // Mostrar erros de validação
                 Object.keys(result.errors).forEach(field => {
@@ -373,6 +358,21 @@ async function submitForm(form) {
                 });
             }
             showMessage(result.message, 'error');
+            return;
+        }
+
+        if (result.success) {
+            // Avisos de integração (Drive/Sheets) — não bloqueiam o sucesso
+            if (result.warnings && result.warnings.length) {
+                console.warn('Avisos do servidor:', result.warnings);
+            }
+
+            // Redirecionar para página de sucesso
+            if (result.pdf_assinado) {
+                window.location.href = 'sucesso.php?pdf=' + encodeURIComponent(result.pdf_assinado);
+            } else {
+                window.location.href = 'sucesso.php';
+            }
         }
     } catch (error) {
         console.error('Erro:', error);
@@ -419,7 +419,9 @@ function clearErrors() {
  */
 function showMessage(message, type) {
     const messageElement = document.getElementById('formMessage');
-    messageElement.innerHTML = message;
+    // textContent (não innerHTML): a mensagem vem do servidor/usuário e é
+    // exibida como texto puro, sem risco de injeção de HTML
+    messageElement.textContent = message;
     messageElement.className = `form-message ${type}`;
     messageElement.style.display = 'block';
     
