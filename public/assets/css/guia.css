@@ -1,0 +1,126 @@
+/*
+ * Página /guia — visualização do Guia do Visitante (sem assinatura).
+ * Autocontida: não depende do CSS do app hospedeiro (o mesmo arquivo serve
+ * o app da IpsisPack e o de clientes Ipsis). Tokens com prefixo guia- no
+ * idioma visual do "Caixa Eletrônico": corpo 18px, bordas espessas em vez
+ * de sombras, alvos >=48px, foco amarelo 3px, breakpoint único 720px.
+ * --guia-acento é sobreposto pela página conforme a marca do host.
+ */
+:root {
+    --guia-acento: #2E7D32;
+    --guia-tinta: #14181F;
+    --guia-navy: #103080;
+    --guia-cinza: #5B6478;
+    --guia-borda: #C7CDD9;
+    --guia-fundo: #F4F5F8;
+    --guia-fonte: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0;
+    font-family: var(--guia-fonte);
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--guia-tinta);
+    background: var(--guia-fundo);
+}
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid #FFDD00; outline-offset: 2px; }
+
+.guia-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #fff;
+    border-bottom: 6px solid var(--guia-acento);
+}
+.guia-cabecalho img { width: 64px; height: auto; flex: none; }
+.guia-cabecalho h1 { margin: 0; font-size: 24px; line-height: 1.2; }
+.guia-cabecalho p { margin: 2px 0 0; font-size: 16px; color: var(--guia-cinza); }
+@media (min-width: 720px) {
+    .guia-cabecalho { padding: 16px 32px; }
+    .guia-cabecalho h1 { font-size: 32px; }
+}
+
+.guia-corpo { max-width: 920px; margin: 0 auto; padding: 16px 16px 32px; }
+
+.guia-controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+}
+.guia-doc { flex: 1 1 200px; font-size: 16px; color: var(--guia-cinza); }
+.guia-zoom {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: #fff;
+    border: 2px solid var(--guia-borda);
+    border-radius: 8px;
+}
+.guia-zoom button {
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 24px;
+    line-height: 1;
+    border: 2px solid var(--guia-acento);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--guia-acento);
+    cursor: pointer;
+}
+.guia-zoom button:hover:not(:disabled) { background: #F2F4F7; }
+.guia-zoom button:disabled { opacity: 0.4; cursor: default; }
+.guia-zoom span {
+    min-width: 64px;
+    text-align: center;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+}
+.guia-baixar {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 20px;
+    background: var(--guia-acento);
+    border-bottom: 4px solid rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+}
+.guia-baixar:hover { filter: brightness(1.1); }
+
+.guia-aviso {
+    padding: 24px;
+    border: 2px dashed var(--guia-borda);
+    border-radius: 8px;
+    background: #fff;
+    text-align: center;
+    color: var(--guia-cinza);
+}
+
+.guia-scroll {
+    padding: 16px;
+    background: #fff;
+    border: 2px solid var(--guia-borda);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+.guia-paginas { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.guia-paginas canvas {
+    border: 1px solid var(--guia-borda);
+    box-shadow: 0 2px 6px rgba(16, 24, 48, 0.12);
+    background: #fff;
+}
+
+.guia-rodape { max-width: 920px; margin: 0 auto 48px; padding: 0 16px; text-align: center; }
+.guia-rodape p { margin: 0 0 8px; font-size: 16px; color: var(--guia-cinza); }
+.guia-rodape a { color: var(--guia-navy); font-weight: 600; }
